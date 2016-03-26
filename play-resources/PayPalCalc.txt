@@ -1,0 +1,3 @@
+Key Alias: PayPal Calc
+Key Store Password: pay.pal.calc
+Key Password: pay.pal.calc

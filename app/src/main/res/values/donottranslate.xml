@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bottom Banner for Home  -->
+    <string name="banner_ad_unit_id">ca-app-pub-8581143305013649/2357796582</string>
+
+    <!-- Google Analytics -->
+    <string name="google_analytics_id">UA-75626424-1</string>
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+
+</resources>

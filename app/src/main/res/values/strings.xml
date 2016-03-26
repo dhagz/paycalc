@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PayPal Calc</string>
+
+    <string name="amount">Amount</string>
+    <string name="paypal_transaction_charge_label">PayPal Transaction Charge</string>
+    <string name="paypal_transaction_charge_percentage">Percentage</string>
+    <string name="paypal_transaction_charge_additional">Additional</string>
+    <string name="paypal_transaction_charge_total">Total Transaction Charge</string>
+    <string name="total_amount">Amount plus PayPal Transaction Charge</string>
+</resources>
