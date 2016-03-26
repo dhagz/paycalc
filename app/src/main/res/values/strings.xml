@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PayPal Calc</string>
+    <string name="app_name">PayCalc</string>
 
     <string name="amount">Amount</string>
     <string name="paypal_transaction_charge_label">PayPal Transaction Charge</string>

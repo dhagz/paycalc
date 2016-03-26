@@ -1,7 +1,7 @@
 package com.walng.dhagz.paypalcalc;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.walng.dhagz.paypalcalc.adapters.CurrencyListAdapter;
 import com.walng.dhagz.paypalcalc.managers.AnalyticsManager;
@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
 
         AnalyticsManager.getInstance(getApplication()).setScreen(TAG);
 
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         presenter = PayPalCalcPresenter.getInstance();
         presenter.bindPayPalCalcView(this);
 
@@ -110,8 +112,10 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
                 presenter.setCurrency(currency);
                 updateAmount(mAmount.getText().toString());
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> adapter) {  }
+            public void onNothingSelected(AdapterView<?> adapter) {
+            }
         });
         mCurrencySpinner.setSelection(0);
     }
