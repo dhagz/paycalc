@@ -7,4 +7,6 @@
     <string name="google_analytics_id">UA-75626424-1</string>
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
+    <!-- Shared Preference Name -->
+    <string name="shared_prefs_name">PayPal Calc</string>
 </resources>

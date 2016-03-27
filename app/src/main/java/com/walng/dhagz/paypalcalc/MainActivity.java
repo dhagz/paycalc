@@ -1,10 +1,15 @@
 package com.walng.dhagz.paypalcalc;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,6 +23,7 @@ import com.walng.dhagz.paypalcalc.models.Currency;
 import com.walng.dhagz.paypalcalc.presenters.PayPalCalcPresenter;
 import com.walng.dhagz.paypalcalc.views.PayPalCalcView;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -33,8 +39,14 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
     @Bind(R.id.amount)
     EditText mAmount;
 
+    @Bind(R.id.percentage_container)
+    ViewGroup mTransactionPercentageContainer;
+
     @Bind(R.id.paypal_transaction_charge_percentage)
     TextView mTransactionPercentage;
+
+    @Bind(R.id.additional_container)
+    ViewGroup mTransactionAdditionContainer;
 
     @Bind(R.id.paypal_transaction_charge_additional)
     TextView mTransactionAddition;
@@ -45,8 +57,58 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
     @Bind(R.id.total_amount)
     TextView mAmountTotal;
 
+    @Bind(R.id.send_some_love)
+    TextView mSendSomeLove;
+
     @Bind(R.id.ad_view)
     AdView mAdView;
+
+    private TextWatcher mAmountTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            // do nothing
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            updateAmount(charSequence.toString());
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            // do nothing
+        }
+    };
+
+    private View.OnClickListener mTransactionPercentageClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (presenter != null) {
+                presenter.displayPercentageChargeChange();
+            }
+        }
+    };
+
+    private View.OnClickListener mTransactionAdditionClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (presenter != null) {
+                presenter.displayAdditionalChargeChange();
+            }
+        }
+    };
+
+    private View.OnClickListener mSendSomeLoveClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            } catch (android.content.ActivityNotFoundException anfe) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            }
+        }
+    };
 
     private PayPalCalcPresenter presenter;
     private CurrencyListAdapter adapter;
@@ -61,26 +123,19 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
 
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        presenter = PayPalCalcPresenter.getInstance();
+        presenter = PayPalCalcPresenter.getInstance(this);
         presenter.bindPayPalCalcView(this);
 
-        //
-        mAmount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // do nothing
-            }
+        // set the love
+        mSendSomeLove.setText(Html.fromHtml(getString(R.string.send_some_love)));
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                updateAmount(charSequence.toString());
-            }
+        // add on text change on amount
+        mAmount.addTextChangedListener(mAmountTextWatcher);
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // do nothing
-            }
-        });
+        // add the click listeners
+        mTransactionPercentageContainer.setOnClickListener(mTransactionPercentageClickListener);
+        mTransactionAdditionContainer.setOnClickListener(mTransactionAdditionClickListener);
+        mSendSomeLove.setOnClickListener(mSendSomeLoveClickListener);
     }
 
     private void updateAmount(String amountString) {
@@ -96,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
     }
 
     @Override
-    public void populateCurrencyList(List<Currency> currencies) {
+    public void populateCurrencyList(LinkedList<Currency> currencies) {
         // Initialize the adapter sending the current context
         // Send the simple_spinner_item layout
         // And finally send the Users array (Your data)
@@ -120,6 +175,15 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
         mCurrencySpinner.setSelection(0);
     }
 
+//    @Override
+//    public Currency selectOtherCurrency() {
+//        int lastPosition = adapter.getCount() - 1;
+//        if (mCurrencySpinner.getSelectedItemPosition() != lastPosition) {
+//            mCurrencySpinner.setSelection(lastPosition);
+//        }
+//        return (Currency) mCurrencySpinner.getSelectedItem();
+//    }
+
     @Override
     public void setTransactionAddition(String transactionAddition) {
         this.mTransactionAddition.setText(transactionAddition);
@@ -138,5 +202,63 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
     @Override
     public void setAmountTotal(String amountTotal) {
         this.mAmountTotal.setText(amountTotal);
+    }
+
+    @Override
+    public void promptPercentageChargeChange(float currentPercentageCharge) {
+        String defaultText = "";
+        if (presenter != null && presenter.getCurrency() != null) {
+            defaultText = presenter.getCurrency().getPercentageCharge() + "";
+        }
+        ChangeDialog.show(this,
+                R.string.dialog_change_percentage_label,
+                defaultText,
+                new ChangeDialog.OnOkClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, String userInput) {
+                        if (presenter != null) {
+                            float percentage;
+                            try {
+                                percentage = Float.parseFloat(userInput);
+                            } catch (Exception ex) {
+                                percentage = 0;
+                            }
+                            if (presenter.getCurrency() != null) {
+                                presenter.changeAdditionalCharge(presenter.getCurrency().getAmountCharge());
+                            }
+                            presenter.changePercentageCharge(percentage);
+                            updateAmount(mAmount.getText().toString());
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void promptAdditionalChargeChange(float currentAdditionalCharge) {
+        String defaultText = "";
+        if (presenter != null && presenter.getCurrency() != null) {
+            defaultText = presenter.getCurrency().getAmountCharge() + "";
+        }
+        ChangeDialog.show(this,
+                R.string.dialog_change_additional_label,
+                defaultText,
+                new ChangeDialog.OnOkClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, String userInput) {
+                        if (presenter != null) {
+                            float amount;
+                            try {
+                                amount = Float.parseFloat(userInput);
+                            } catch (Exception ex) {
+                                amount = 0;
+                            }
+                            if (presenter.getCurrency() != null) {
+                                presenter.changePercentageCharge(presenter.getCurrency().getPercentageCharge());
+                            }
+                            presenter.changeAdditionalCharge(amount);
+                            updateAmount(mAmount.getText().toString());
+                        }
+                    }
+                });
     }
 }

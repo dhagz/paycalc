@@ -7,4 +7,9 @@
     <string name="paypal_transaction_charge_additional">Additional</string>
     <string name="paypal_transaction_charge_total">Total Transaction Charge</string>
     <string name="total_amount">Amount plus PayPal Transaction Charge</string>
+
+    <string name="dialog_change_percentage_label">Percentage Charge (%)</string>
+    <string name="dialog_change_additional_label">Additional Charge</string>
+
+    <string name="send_some_love"><![CDATA[Send some <b><font color="#FF4081">LOVE</font></b>!<br/>Rate this app with <b>5 stars</b>!]]></string>
 </resources>

@@ -19,9 +19,29 @@
         tools:text="Philippine Peso" />
 
     <TextView
+        android:id="@+id/percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="4.40%" />
+
+    <TextView
         android:id="@+id/symbol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingEnd="0dp"
+        android:paddingLeft="@dimen/horizontal_margin"
+        android:paddingRight="0dp"
+        android:paddingStart="@dimen/horizontal_margin"
         tools:text="PHP" />
+
+    <TextView
+        android:id="@+id/amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="0dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="0dp"
+        android:paddingStart="4dp"
+        tools:text="15.00" />
 
 </LinearLayout>
