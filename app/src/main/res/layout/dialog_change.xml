@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:digits="1234567890."
             android:hint="@string/dialog_change_percentage_label"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:textSize="@dimen/text_headline" />
     </android.support.design.widget.TextInputLayout>
 
