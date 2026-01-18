@@ -1,7 +1,7 @@
 package com.walng.dhagz.paypalcalc.providers;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.gson.reflect.TypeToken;
 import com.walng.dhagz.paypalcalc.models.Currency;

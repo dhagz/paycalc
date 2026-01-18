@@ -2,8 +2,7 @@ package com.walng.dhagz.paypalcalc;
 
 import android.app.Application;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 /**
  * @author Dhagz
@@ -11,19 +10,21 @@ import com.google.android.gms.analytics.Tracker;
  */
 public class PayPalCalcApplication extends Application {
 
-    private Tracker mTracker;
+    private FirebaseAnalytics mFirebaseAnalytics;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // Initialize Firebase Analytics
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+    }
 
     /**
-     * Gets the default {@link Tracker} for this {@link Application}.
+     * Gets the Firebase Analytics instance for this {@link Application}.
      *
-     * @return tracker
+     * @return FirebaseAnalytics instance
      */
-    synchronized public Tracker getDefaultTracker() {
-        if (mTracker == null) {
-            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-            mTracker = analytics.newTracker(R.xml.global_tracker);
-        }
-        return mTracker;
+    public FirebaseAnalytics getFirebaseAnalytics() {
+        return mFirebaseAnalytics;
     }
 }

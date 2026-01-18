@@ -4,64 +4,30 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.walng.dhagz.paypalcalc.adapters.CurrencyListAdapter;
+import com.walng.dhagz.paypalcalc.databinding.ActivityMainBinding;
 import com.walng.dhagz.paypalcalc.managers.AnalyticsManager;
 import com.walng.dhagz.paypalcalc.models.Currency;
 import com.walng.dhagz.paypalcalc.presenters.PayPalCalcPresenter;
 import com.walng.dhagz.paypalcalc.views.PayPalCalcView;
 
 import java.util.LinkedList;
-import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import android.widget.AdapterView;
 
 public class MainActivity extends AppCompatActivity implements PayPalCalcView {
 
     private static final String TAG = "MainActivity";
 
-    @Bind(R.id.currency_spinner)
-    Spinner mCurrencySpinner;
-
-    @Bind(R.id.amount)
-    EditText mAmount;
-
-    @Bind(R.id.percentage_container)
-    ViewGroup mTransactionPercentageContainer;
-
-    @Bind(R.id.paypal_transaction_charge_percentage)
-    TextView mTransactionPercentage;
-
-    @Bind(R.id.additional_container)
-    ViewGroup mTransactionAdditionContainer;
-
-    @Bind(R.id.paypal_transaction_charge_additional)
-    TextView mTransactionAddition;
-
-    @Bind(R.id.paypal_transaction_charge_total)
-    TextView mTransactionTotal;
-
-    @Bind(R.id.total_amount)
-    TextView mAmountTotal;
-
-    @Bind(R.id.send_some_love)
-    TextView mSendSomeLove;
-
-    @Bind(R.id.ad_view)
-    AdView mAdView;
+    private ActivityMainBinding binding;
 
     private TextWatcher mAmountTextWatcher = new TextWatcher() {
         @Override
@@ -116,26 +82,30 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         AnalyticsManager.getInstance(getApplication()).setScreen(TAG);
 
+        // Initialize Mobile Ads SDK
+        MobileAds.initialize(this, initializationStatus -> {});
+        
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        binding.adView.loadAd(adRequest);
+        
         presenter = PayPalCalcPresenter.getInstance(this);
         presenter.bindPayPalCalcView(this);
 
         // set the love
-        mSendSomeLove.setText(Html.fromHtml(getString(R.string.send_some_love)));
+        binding.sendSomeLove.setText(Html.fromHtml(getString(R.string.send_some_love), Html.FROM_HTML_MODE_LEGACY));
 
         // add on text change on amount
-        mAmount.addTextChangedListener(mAmountTextWatcher);
+        binding.amount.addTextChangedListener(mAmountTextWatcher);
 
         // add the click listeners
-        mTransactionPercentageContainer.setOnClickListener(mTransactionPercentageClickListener);
-        mTransactionAdditionContainer.setOnClickListener(mTransactionAdditionClickListener);
-        mSendSomeLove.setOnClickListener(mSendSomeLoveClickListener);
+        binding.percentageContainer.setOnClickListener(mTransactionPercentageClickListener);
+        binding.additionalContainer.setOnClickListener(mTransactionAdditionClickListener);
+        binding.sendSomeLove.setOnClickListener(mSendSomeLoveClickListener);
     }
 
     private void updateAmount(String amountString) {
@@ -156,23 +126,23 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
         // Send the simple_spinner_item layout
         // And finally send the Users array (Your data)
         adapter = new CurrencyListAdapter(this, currencies);
-        mCurrencySpinner.setAdapter(adapter); // Set the custom adapter to the spinner
+        binding.currencySpinner.setAdapter(adapter); // Set the custom adapter to the spinner
         // You can create an anonymous listener to handle the event when is selected an spinner item
-        mCurrencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.currencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 // Here you get the current item (a Currency object) that is selected by its position
                 Currency currency = adapter.getItem(position);
                 presenter.setCurrency(currency);
-                updateAmount(mAmount.getText().toString());
+                updateAmount(binding.amount.getText().toString());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapter) {
             }
         });
-        mCurrencySpinner.setSelection(0);
+        binding.currencySpinner.setSelection(0);
     }
 
 //    @Override
@@ -186,22 +156,22 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
 
     @Override
     public void setTransactionAddition(String transactionAddition) {
-        this.mTransactionAddition.setText(transactionAddition);
+        binding.paypalTransactionChargeAdditional.setText(transactionAddition);
     }
 
     @Override
     public void setTransactionPercentage(String transactionPercentage) {
-        this.mTransactionPercentage.setText(transactionPercentage);
+        binding.paypalTransactionChargePercentage.setText(transactionPercentage);
     }
 
     @Override
     public void setTransactionTotal(String transactionTotal) {
-        this.mTransactionTotal.setText(transactionTotal);
+        binding.paypalTransactionChargeTotal.setText(transactionTotal);
     }
 
     @Override
     public void setAmountTotal(String amountTotal) {
-        this.mAmountTotal.setText(amountTotal);
+        binding.totalAmount.setText(amountTotal);
     }
 
     @Override
@@ -227,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
                                 presenter.changeAdditionalCharge(presenter.getCurrency().getAmountCharge());
                             }
                             presenter.changePercentageCharge(percentage);
-                            updateAmount(mAmount.getText().toString());
+                            updateAmount(binding.amount.getText().toString());
                         }
                     }
                 });
@@ -256,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements PayPalCalcView {
                                 presenter.changePercentageCharge(presenter.getCurrency().getPercentageCharge());
                             }
                             presenter.changeAdditionalCharge(amount);
-                            updateAmount(mAmount.getText().toString());
+                            updateAmount(binding.amount.getText().toString());
                         }
                     }
                 });

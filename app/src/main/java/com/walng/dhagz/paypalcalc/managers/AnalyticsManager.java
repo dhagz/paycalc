@@ -1,10 +1,9 @@
 package com.walng.dhagz.paypalcalc.managers;
 
 import android.app.Application;
+import android.os.Bundle;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.walng.dhagz.paypalcalc.PayPalCalcApplication;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 /**
  * @author Dhagz
@@ -13,7 +12,7 @@ import com.walng.dhagz.paypalcalc.PayPalCalcApplication;
 public class AnalyticsManager {
 
     private static AnalyticsManager instance;
-    private Tracker mTracker;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     public static AnalyticsManager getInstance(Application application) {
         if (instance == null) {
@@ -23,23 +22,22 @@ public class AnalyticsManager {
     }
 
     public AnalyticsManager(Application application) {
-        if (application instanceof PayPalCalcApplication) {
-            // Obtain the shared Tracker instance.
-            PayPalCalcApplication app = (PayPalCalcApplication) application;
-            mTracker = app.getDefaultTracker();
-        }
+        // Initialize Firebase Analytics
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(application);
     }
 
     public void setScreen(String screenName) {
-        mTracker.setScreenName(screenName);
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName);
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, screenName);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
     }
 
     public void sendEvent(String category, String action) {
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory(category)
-                .setAction(action)
-                .build());
+        Bundle bundle = new Bundle();
+        bundle.putString("category", category);
+        bundle.putString("action", action);
+        mFirebaseAnalytics.logEvent("custom_event", bundle);
     }
 
 }

@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/horizontal_margin"
     android:paddingTop="@dimen/vertical_margin">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/value_container"
         android:layout_width="match_parent"
         android:orientation="horizontal"
@@ -22,6 +22,6 @@
             android:hint="@string/dialog_change_percentage_label"
             android:inputType="numberDecimal"
             android:textSize="@dimen/text_headline" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </RelativeLayout>

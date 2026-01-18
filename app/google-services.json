@@ -1,46 +1,29 @@
 {
   "project_info": {
-    "project_id": "crypto-isotope-126116",
     "project_number": "512523700843",
-    "name": "PayPal Calc"
+    "project_id": "crypto-isotope-126116",
+    "storage_bucket": "crypto-isotope-126116.appspot.com"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:512523700843:android:7c977962d2ea17ff",
-        "client_id": "android:com.walng.dhagz.paypalcalc",
-        "client_type": 1,
         "android_client_info": {
-          "package_name": "com.walng.dhagz.paypalcalc",
-          "certificate_hash": []
+          "package_name": "com.walng.dhagz.paypalcalc"
         }
       },
       "oauth_client": [],
-      "api_key": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDummyKeyForBuildPurposesOnly123456789"
+        }
+      ],
       "services": {
-        "analytics_service": {
-          "status": 2,
-          "analytics_property": {
-            "tracking_id": "UA-75626424-1"
-          }
-        },
-        "cloud_messaging_service": {
-          "status": 1,
-          "apns_config": []
-        },
         "appinvite_service": {
-          "status": 1,
           "other_platform_oauth_client": []
-        },
-        "google_signin_service": {
-          "status": 1
-        },
-        "ads_service": {
-          "status": 1
         }
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }
